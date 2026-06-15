@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>文具歸還管理系統</title>
+  <link rel="stylesheet" href="styles.css?v=8">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">OFFBOARDING ASSET RETURN</p>
+      <h1>文具歸還管理系統</h1>
+      <p class="subtitle">快速核對同仁名下借用品，留下清楚、可追蹤的歸還紀錄。</p>
+    </div>
+    <div class="top-actions">
+      <button class="btn secondary" id="exportBtn">匯出紀錄</button>
+      <button class="btn secondary" id="backupBtn">備份進度</button>
+      <label class="btn secondary file-btn">還原進度<input id="restoreInput" type="file" accept=".json"></label>
+    </div>
+  </header>
+
+  <main>
+    <section class="source-panel">
+      <div>
+        <p class="section-kicker">DATA UPDATE</p>
+        <h2>更新原始借用資料</h2>
+        <p>上傳最新匯出的 CSV。系統只更新借用清單，已登記的歸還、遺失及案件資料都會保留。</p>
+      </div>
+      <div class="source-actions">
+        <div class="source-status">
+          <strong id="sourceFileName">尚未載入資料</strong>
+          <span id="sourceUpdatedAt">請先上傳最新 CSV</span>
+        </div>
+        <label class="btn primary file-btn">選擇最新 CSV
+          <input id="sourceInput" type="file" accept=".csv,text/csv">
+        </label>
+      </div>
+    </section>
+
+    <section class="stats" aria-label="統計摘要">
+      <article><span>借用紀錄</span><strong id="loanCount">0</strong><small>筆已完成資料</small></article>
+      <article><span>借用同仁</span><strong id="personCount">0</strong><small>位待核對人員</small></article>
+      <article><span>歸還完成</span><strong id="returnedCount">0</strong><small>件物品</small></article>
+      <article class="warning"><span>尚待處理</span><strong id="pendingCount">0</strong><small>件物品</small></article>
+    </section>
+
+    <section class="workspace">
+      <aside class="people-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="section-kicker">STEP 1</p>
+            <h2>選擇同仁</h2>
+          </div>
+          <span class="count-pill" id="filteredCount">0 人</span>
+        </div>
+        <label class="search-box">
+          <span aria-hidden="true">⌕</span>
+          <input id="searchInput" type="search" placeholder="搜尋姓名、部門或物品">
+        </label>
+        <div class="filter-row">
+          <button class="chip active" data-filter="all">全部</button>
+          <button class="chip" data-filter="pending">未完成</button>
+          <button class="chip" data-filter="complete">已結案</button>
+        </div>
+        <div id="peopleList" class="people-list"></div>
+      </aside>
+
+      <section class="detail-panel">
+        <div id="emptyState" class="empty-state">
+          <div class="empty-icon">✓</div>
+          <h2>請先選擇一位同仁</h2>
+          <p>左側可依姓名、部門或借用物品快速搜尋。</p>
+        </div>
+
+        <div id="detailContent" hidden>
+          <div class="person-header">
+            <div class="avatar" id="avatar"></div>
+            <div class="person-copy">
+              <p class="section-kicker">STEP 2 · 核對借用品</p>
+              <h2 id="personName"></h2>
+              <p id="personMeta"></p>
+            </div>
+            <div class="case-fields">
+              <label>離職日<input id="leaveDate" type="date"></label>
+              <label>經辦人<input id="handler" type="text" placeholder="輸入姓名"></label>
+            </div>
+          </div>
+
+          <div class="progress-card">
+            <div>
+              <span id="progressText">已處理 0 / 0 件</span>
+              <strong id="caseStatus">尚未結案</strong>
+            </div>
+            <div class="progress-track"><span id="progressBar"></span></div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>借用物品</th>
+                  <th>借用日期</th>
+                  <th>數量</th>
+                  <th>處理狀態</th>
+                  <th>本次數量</th>
+                  <th>實際歸還日</th>
+                  <th>備註</th>
+                </tr>
+              </thead>
+              <tbody id="itemRows"></tbody>
+            </table>
+          </div>
+
+          <div class="detail-actions">
+            <button class="btn ghost" id="resetPersonBtn">清除本案進度</button>
+            <div>
+              <button class="btn secondary" id="printBtn">列印歸還清冊</button>
+              <button class="btn primary" id="returnAllBtn">全部標記已歸還</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js?v=10"></script>
+</body>
+</html>
